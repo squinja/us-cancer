@@ -10,6 +10,7 @@
 	import type { BBox, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 	import { onMount } from 'svelte';
+    import { genColor } from '../utils';
 	import County from './County.svelte';
 
 	export let geoJSONPath: string;
@@ -47,7 +48,8 @@
 		counties = geojson.features.map((feature) => {
 			return {
 				...feature,
-				path: pathGenerator(feature)
+				path: pathGenerator(feature),
+                colorId: genColor()
 			};
 		});
 
@@ -55,9 +57,9 @@
 
 </script>
 
-{#each counties as { id, path }}
+{#each counties as { id, path, colorId }}
 	<!-- svelte-ignore a11y-mouse-events-have-key-events-->
-     <County {path} fill="gray" stroke="" opacity={hoveredCountyId === id ? 1.0 : 0.5}/>
+     <County {path} fill={colorId} stroke="" opacity={hoveredCountyId === id ? 1.0 : 0.5}/>
 	<!-- <path
 		d={path}
 		class:active={hoveredCountyId === id}
