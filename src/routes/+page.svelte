@@ -6,6 +6,10 @@
 
 	let width = 1000;
 	let height = 500;
+	let hoveredColorID: string | undefined = undefined;
+
+	// $: console.log('hoveredColorID', hoveredColorID);
+
 
 	const geoJSONPath =
 		'https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json';
@@ -13,8 +17,8 @@
 
 <h1>Where is Cancer in the US?</h1>
 <main bind:clientWidth={width} bind:clientHeight={height}>
-	<Canvas {width} {height}>
-		<GeoMapCanvas {geoJSONPath} {width} {height} />
+	<Canvas {width} {height} bind:hoveredColorID>
+		<GeoMapCanvas {geoJSONPath} {width} {height} {hoveredColorID}/>
 	</Canvas>
 </main>
 

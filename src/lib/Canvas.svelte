@@ -4,8 +4,10 @@
 	export let width: number;
 	export let height: number;
 	export let contextName = 'canvas';
+	export let hoveredColorID: string | undefined;
 
-	const drawFunctions: ((ctx: CanvasRenderingContext2D| null) => void)[] = [];
+
+	const drawFunctions: ((ctx: CanvasRenderingContext2D | null) => void)[] = [];
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D | null;
@@ -42,6 +44,18 @@
 		pendingInvalidation = false;
 	}
 
+
+	const handleMouseMove = (e: MouseEvent) => {
+		const { layerX: x, layerY: y } = e;
+		const { data } = ctx?.getImageData(x, y, 1, 1);
+		const [r, g, b] = data;
+		if (r + g + b === 0) {
+			hoveredColorID = undefined;
+		} else {
+			hoveredColorID = `rgb(${r},${g},${b})`;
+		}
+	};
+
 	onMount(() => {
 		ctx = canvas.getContext('2d');
 	});
@@ -63,4 +77,4 @@
 	$: if (canvas && ctx) scaleCanvas(canvas, ctx, width, height);
 </script>
 
-<canvas bind:this={canvas}><slot /></canvas>
+<canvas bind:this={canvas} on:mousemove={handleMouseMove}><slot /></canvas>

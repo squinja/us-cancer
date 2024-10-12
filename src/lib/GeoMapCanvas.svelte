@@ -10,12 +10,13 @@
 	import type { BBox, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 	import { onMount } from 'svelte';
-    import { genColor } from '../utils';
+	import { genColor } from '../utils';
 	import County from './County.svelte';
 
 	export let geoJSONPath: string;
 	export let width: number;
 	export let height: number;
+    export let hoveredColorID: string | undefined;
 
 	let geojson: FeatureCollection | undefined;
 
@@ -34,10 +35,11 @@
 	$: pathGenerator = geoPath(projection);
 
 	interface GeoPathStruct {
-		path: string | Path2D | undefined;
+		path: string | null;
+		colorId: string;
 		type: 'Feature';
 		geometry: Geometry;
-		id?: number | string | null;
+		id?: string | number | undefined;
 		properties: GeoJsonProperties;
 		bbox?: BBox | undefined;
 	}
@@ -49,17 +51,20 @@
 			return {
 				...feature,
 				path: pathGenerator(feature),
-                colorId: genColor()
+				colorId: genColor()
 			};
 		});
 
-	let hoveredCountyId: number | string | undefined | null = null;
-
+	$: hoveredCounty = counties.find((county) => county.colorId === hoveredColorID);
+    $: console.log('hoveredCounty in geomapcanvas',hoveredCounty)
+    $: console.log('hoveredColorID',hoveredColorID)
+    $: console.log('counties',counties)
+    $: console.log('counties.find((county) => county.colorId === hoveredColorID)',counties.find((county) => county.colorId === hoveredColorID))
 </script>
 
 {#each counties as { id, path, colorId }}
 	<!-- svelte-ignore a11y-mouse-events-have-key-events-->
-     <County {path} fill={colorId} stroke="" opacity={hoveredCountyId === id ? 1.0 : 0.5}/>
+	<County {path} fill={colorId} stroke="" opacity={hoveredCounty && hoveredCounty.id === id ? 1.0 : 0.5} />
 	<!-- <path
 		d={path}
 		class:active={hoveredCountyId === id}
@@ -68,4 +73,3 @@
 		aria-label="County"
 	></path> -->
 {/each}
-
