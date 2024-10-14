@@ -2,7 +2,7 @@
 	import { getContext, onMount, onDestroy, afterUpdate } from 'svelte';
 	import { tweened } from 'svelte/motion';
 
-	export let path: string  | Path2D | undefined;
+	export let path: string | null;
 	export let opacity = 1.0;
 	export let stroke: string | undefined = undefined;
 	export let strokeWidth = 1;

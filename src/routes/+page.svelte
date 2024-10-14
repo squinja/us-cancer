@@ -2,8 +2,7 @@
 	import Canvas from '$lib/Canvas.svelte';
 
 	import { json, zoomIdentity, geoAlbersUsa, geoPath } from 'd3';
-	// import { BBox } from 'd3';
-	import type { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+	import type { BBox, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 	import { onMount } from 'svelte';
 	import { genColor } from '../utils';
 	import County from '$lib/County.svelte';
@@ -25,9 +24,9 @@
 
 	const geojsonPath =
 		'https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json';
-	let geojson: FeatureCollection | undefined;
+	let geojson: FeatureCollection;
 	onMount(async () => {
-		geojson = await json(geojsonPath);
+		geojson = await json(geojsonPath) as FeatureCollection;
 	});
 
 	$: projection = geoAlbersUsa().fitSize([width, height], geojson);
