@@ -41,5 +41,5 @@
 
 	afterUpdate(invalidate);
 
-	$: tOpacity.set(opacity, { duration: 200, delay: opacity === 1.0 ? 0 : 800});
+	$: tOpacity.set(opacity, { duration: 100, });
 </script>
