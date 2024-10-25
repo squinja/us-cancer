@@ -121,13 +121,6 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 
-<GeoMapCanvas geoJSONPath={geojsonPath} />
-<GeoMapSvg geoJSONPath={geojsonPath} />
+<GeoMapCanvas data={geojsonPath} />
+<GeoMapSvg data={geojsonPath} />
 
-<style>
-	main {
-		width: 100vw;
-		height: 100vh;
-		overflow: hidden;
-	}
-</style>

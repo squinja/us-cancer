@@ -17,7 +17,7 @@
 	import type { GeoPathStruct } from './constants';
 	import ResponsiveSvg from '$lib/components/ResponsiveSVG/ResponsiveSVG.svelte';
 
-	export let geoJSONPath: string;
+	export let data: string;
 
 	let width: number;
 	let height: number;
@@ -25,7 +25,7 @@
 
 	// Get all the counties with actual coordinates and state, county name, id
 	onMount(async () => {
-		geojson = await json(geoJSONPath);
+		geojson = await json(data);
 	});
 
 	let projection: GeoProjection | undefined;
