@@ -1,7 +1,6 @@
 <!-- A Map component build in SVGs using paths. 
  1. Pass in a geojson file, and geoAlbersUsa() and geoPath() will split the file into SVG paths. 
- 2. Then, iterate over this path array with a Svelte {#each} look to generate the paths for the map.
- -->
+ 2. Then, iterate over this path array with a Svelte {#each} look to generate the paths for the map.-->
 
 <script lang="ts">
 	import {

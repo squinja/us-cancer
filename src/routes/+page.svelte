@@ -1,30 +1,12 @@
 <script lang="ts">
-	import Canvas from '$lib/components/Canvas/Canvas.svelte';
-
-	import { json, zoomIdentity, geoAlbersUsa, geoPath, csv } from 'd3';
+	import { json, csv } from 'd3';
 	import type { DSVRowArray, DSVRowString } from 'd3-dsv';
-	import type { BBox, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+	import type { FeatureCollection } from 'geojson';
 	import { onMount } from 'svelte';
-	import { genColor } from '../utils';
-	import County from '$lib/components/map/County/County.svelte';
 	import type { CancerData, cancerDataUnformatted } from '$lib/constants';
+	import GeoMapCanvas from '$lib/components/map/GeoMapCanvas/GeoMapCanvas.svelte';
 	import GeoMapSvg from '$lib/components/map/GeoMapSVG/GeoMapSVG.svelte';
-	import ResponsiveSvg from '$lib/components/ResponsiveSVG/ResponsiveSVG.svelte';
 
-	interface GeoPathStruct {
-		path: string | null;
-		colorId: string;
-		type: 'Feature';
-		geometry: Geometry;
-		id?: string | number | undefined;
-		properties: GeoJsonProperties;
-		bbox?: BBox | undefined;
-	}
-
-	let width: number, height: number;
-	let hoveredColorID: string | undefined;
-	let clickedCounty: GeoPathStruct | undefined;
-	let transform = zoomIdentity;
 	let data: DSVRowArray<keyof cancerDataUnformatted> | undefined; //cancer dataset
 	//	#Incidence Rate Report for United States by County
 	// #
@@ -132,59 +114,15 @@
 		}
 	});
 
-	$: projection = geoAlbersUsa().fitSize([width, height], geojson);
-	$: pathGenerator = geoPath(projection);
-
-	let counties: GeoPathStruct[] = [];
-	$: if (geojson)
-		counties = geojson.features.map((feature) => {
-			return {
-				...feature,
-				path: pathGenerator(feature),
-				colorId: genColor(),
-				bounds: pathGenerator.bounds(feature)
-			};
-		});
-
-	// zoom in
-	$: if (clickedCounty) {
-		const [[x0, y0], [x1, y1]] = clickedCounty.bounds;
-		transform = zoomIdentity
-			.translate(width / 2, height / 2)
-			.scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-			.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
-		// zoom out
-	} else {
-		transform = zoomIdentity;
-	}
-
-	$: hoveredCounty = counties.find((c) => c.colorId === hoveredColorID);
 </script>
 
-<svelte:window on:keydown={(e) => e.key === 'Escape' && (clickedCounty = undefined)} />
 
 <h1>Where is Cancer in the US?</h1>
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 
+<GeoMapCanvas geoJSONPath={geojsonPath} />
 <GeoMapSvg geoJSONPath={geojsonPath} />
-
-<!-- <main
-	bind:clientWidth={width}
-	bind:clientHeight={height}
-	on:click={() => (clickedCounty = hoveredCounty)}
->
-	<Canvas {width} {height} {transform} bind:hoveredColorID>
-		{#each counties as { id, path }}
-			<County {path} fill="purple" opacity={hoveredCounty && hoveredCounty.id === id ? 1.0 : 0.5} />
-		{/each}
-	</Canvas>
-	<Canvas {width} {height} {transform} bind:hoveredColorID hide --position="absolute">
-		{#each counties as { id, path, colorId }}
-			<County {path} fill={colorId} stroke="#FFFFFF" opacity={1} />
-		{/each}
-	</Canvas>
-</main> -->
 
 <style>
 	main {
