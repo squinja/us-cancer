@@ -10,14 +10,14 @@
 	import type { BBox, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 	import { onMount } from 'svelte';
-	import { genColor } from '../utils';
-	import County from './County.svelte';
+	import { genColor } from '../../../../utils';
+	import County from '../County/County.svelte';
 
 	export let geoJSONPath: string;
 	export let width: number;
 	export let height: number;
-	export let hoveredColorID: string | undefined;
-	export let hoveredCounty: GeoPathStruct | undefined;
+    export let hoveredColorID: string | undefined;
+	export let hoveredCounty: GeoPathStruct | undefined
 
 	let geojson: FeatureCollection | undefined;
 
@@ -56,22 +56,14 @@
 			};
 		});
 
-	// $: hoveredCounty = counties.find((county) => county.colorId === hoveredColorID);
-	// $: console.log('hoveredCounty in display', hoveredCounty);
-	// $: console.log('hoveredColorID', hoveredColorID);
-	// $: console.log('counties', counties);
-	// $: console.log(
-	// 	'counties.find((county) => county.colorId === hoveredColorID)',
-	// 	counties.find((county) => county.colorId === hoveredColorID)
-	// );
+	$: hoveredCounty = counties.find((county) => county.colorId === hoveredColorID);
+    $: console.log('hoveredCounty in geomapcanvas',hoveredCounty)
+    $: console.log('hoveredColorID',hoveredColorID)
+    $: console.log('counties',counties)
+    $: console.log('counties.find((county) => county.colorId === hoveredColorID)',counties.find((county) => county.colorId === hoveredColorID))
 </script>
 
 {#each counties as { id, path, colorId }}
 	<!-- svelte-ignore a11y-mouse-events-have-key-events-->
-	<County
-		{path}
-		fill="purple"
-		stroke=""
-		opacity={hoveredCounty && hoveredCounty.id === id ? 1.0 : 0.5}
-	/>
+	<County {path} fill={colorId} stroke="#FFFFFF" opacity={1.0} />
 {/each}
