@@ -8,6 +8,8 @@
 	import { genColor } from '../utils';
 	import County from '$lib/components/map/County/County.svelte';
 	import type { CancerData, cancerDataUnformatted } from '$lib/constants';
+	import GeoMapSvg from '$lib/components/map/GeoMapSVG/GeoMapSVG.svelte';
+	import ResponsiveSvg from '$lib/components/ResponsiveSVG/ResponsiveSVG.svelte';
 
 	interface GeoPathStruct {
 		path: string | null;
@@ -164,7 +166,10 @@
 <h1>Where is Cancer in the US?</h1>
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<main
+
+<GeoMapSvg geoJSONPath={geojsonPath} />
+
+<!-- <main
 	bind:clientWidth={width}
 	bind:clientHeight={height}
 	on:click={() => (clickedCounty = hoveredCounty)}
@@ -179,7 +184,7 @@
 			<County {path} fill={colorId} stroke="#FFFFFF" opacity={1} />
 		{/each}
 	</Canvas>
-</main>
+</main> -->
 
 <style>
 	main {
