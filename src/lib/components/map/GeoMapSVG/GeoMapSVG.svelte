@@ -1,3 +1,7 @@
+<!-- A Map component build in SVGs using paths. 
+ 1. Pass in a geojson file, and geoAlbersUsa() and geoPath() will split the file into SVG paths. 
+ 2. Then, iterate over this path array with a Svelte {#each} look to generate the paths for the map.-->
+
 <script lang="ts">
 	import {
 		json,
@@ -10,16 +14,18 @@
 	import type { BBox, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 	import { onMount } from 'svelte';
+	import type { GeoPathStruct } from './constants';
+	import ResponsiveSvg from '$lib/components/ResponsiveSVG/ResponsiveSVG.svelte';
 
-	export let geoJSONPath: string;
-	export let width: number;
-	export let height: number;
+	export let data: string;
 
+	let width: number;
+	let height: number;
 	let geojson: FeatureCollection | undefined;
 
 	// Get all the counties with actual coordinates and state, county name, id
 	onMount(async () => {
-		geojson = await json(geoJSONPath);
+		geojson = await json(data);
 	});
 
 	let projection: GeoProjection | undefined;
@@ -31,19 +37,11 @@
 	// Generates the actual path objects
 	$: pathGenerator = geoPath(projection);
 
-	interface GeoPathStruct {
-		path: string | null;
-		type: 'Feature';
-		geometry: Geometry;
-		id?: number | string | null;
-		properties: GeoJsonProperties;
-		bbox?: BBox | undefined;
-	}
-
 	let counties: GeoPathStruct[] = [];
 	// add path object to each county so we can draw this in DOM
 	$: if (geojson)
 		counties = geojson.features.map((feature) => {
+			// console.log('feature',feature)
 			return {
 				...feature,
 				path: pathGenerator(feature)
@@ -51,19 +49,23 @@
 		});
 
 	let hoveredCountyId: number | string | undefined | null = null;
-	$: console.log(hoveredCountyId);
+
+	$: console.log(width);
+	// $: console.log(hoveredCountyId);
 </script>
 
-{#each counties as { id, path }}
-	<!-- svelte-ignore a11y-mouse-events-have-key-events-->
-	<path
-		d={path}
-		class:active={hoveredCountyId === id}
-		on:mouseover={() => (hoveredCountyId = id)}
-		role="img"
-		aria-label="County"
-	></path>
-{/each}
+<ResponsiveSvg bind:height bind:width>
+	{#each counties as { id, path }}
+		<!-- svelte-ignore a11y-mouse-events-have-key-events-->
+		<path
+			d={path}
+			class:active={hoveredCountyId === id}
+			on:mouseover={() => (hoveredCountyId = id)}
+			role="img"
+			aria-label="County"
+		></path>
+	{/each}
+</ResponsiveSvg>
 
 <style>
 	path {
